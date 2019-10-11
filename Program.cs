@@ -6,83 +6,90 @@ using System.Threading.Tasks;
 
 namespace SodaCrateSlutprojekt
 {
-    class Sodacrate
+    private class Sodacrate
     {
-        // PROPERTIES:
-        private Soda[] minBack;         // Vektorn ska innehålla 25 objekter av klass Soda som representerar flaskorna
-        private int AntalFlaskor = 0;   // Håller reda på antal flaskor
+        private Soda[] mySodacrate = new Soda[25];
+        static int AntalFlaskor = 0;
 
-        // KONSTRUKTOR:
         public Sodacrate()
         {
-            minBack = new Soda[25];
+            Run();
         }
-
-        // METODER:
-        public void Run()   // Metod som anroper alla andra metoder i klassen och styr programmet
+     
+        public void Run()
         {
-            Console.WriteLine("*************************************************"); // Välkomna användaren
-            Console.WriteLine("Välkommen till fantastiska läskbacken-simulatorn!");
-            int option = 0;
-            do
-            {
-                Console.WriteLine("\n                * * *");                       // Skriva ut menyn
-                Console.WriteLine("\nVälj alternativ:");
-                Console.WriteLine("1. Lägga till en läsk i läskbacken");
-                Console.WriteLine("2. Skriva ut innehållet i läskbacken");
-                Console.WriteLine("3. Beräkna det totala värdet av backen");
-                Console.WriteLine("4. Beräkna medelvärdet av alla dryck i backen");
-                Console.WriteLine("5. Sök efter en läsk");
-                Console.WriteLine("6. Sortera läsk i läskbacken och skriva den ut");
-                Console.WriteLine("7. Ta ut en flaska");
-                Console.WriteLine("0. Avsluta programmet");
-
-                Console.Write("\nAnge numret bredvid önskat alternativ: ");         // Användaren bes ange numret från menyn ovan
-
-                try
-                {                                                   // try-catch-blocket forhindrar att programmet kraschar
-                    option = int.Parse(Console.ReadLine());         // om användaren skrivit in något annat än ett heltal
-                }
-                catch
-                {                                                   // Om användaren skrivit in något annat än ett heltal
-                    option = 8;                                     // tilldelas nummer 8 till variabeln option.
-                }                                                   // Detta kommer att hämta i 'default' i switchen, 
-                                                                    // så att "Felaktig inmatning" skrivs ut
-                switch (option)                                     
-                {
-                    case 1:                                         // Beroende på användarens inmatning anropas motsvarande metoden
-                        AddSoda();
-                        break;
-                    case 2:
-                        PrintCrate();
-                        break;
-                    case 3:
-                        PrintTotal();
-                        break;
-                    case 4:
-                        PrintAverage();
-                        break;
-                    case 5:
-                        FindSoda();
-                        break;
-                    case 6:
-                        SortSoda();                        
-                        break;
-                    case 7:
-                        TakeSoda();
-                        break;
-                    case 0:
-                        Console.WriteLine("----------------------------------");
-                        Console.WriteLine("Programmet avslutas");
-                        break;
-                    default:
-                        Console.WriteLine("Felaktig inmatning");    // Om användaren skrivit ett nummer som inte finns i menyn (och därmed i switchen)
-                        break;                                      // eller om användaren skrivit något som inte kan omavndlas till heltal och så blir 8 (s. catch ovan)
-                }
-            } while (option != 0);                                  // Så länge som användaren inte valt 0 (för att avlsuta programmet) ska menyn skrivas ut
+            PrintMenu();
+            int selectedOption = Select();
+            SwitchSelection(selectedOption);
+            Run();
         }
 
-        public void AddSoda()               // Metod för att lägga till en läsk
+    private void PrintMenu()
+    {
+        Console.Clear();
+        Console.WriteLine("*************************************************\n" +
+                          "Välkommen till fantastiska läskbacken-simulatorn!\n\n" +
+                          "                     * * *\n" +
+                          "Välj alternativ:\n\n" +
+                          "[1] Lägga till en läsk i läskbacken\n" +
+                          "[2] Skriva ut innehållet i läskbacken\n" +
+                          "[3] Beräkna det totala värdet av backen\n" +
+                          "[4] Beräkna medelvärdet av alla dryck i backen\n" +
+                          "[5] Sök efter en läsk\n" +
+                          "[6] Sortera läsk i läskbacken och skriva den ut\n" +
+                          "[7] Ta ut en flaska\n" +
+                          "[0] Avsluta programmet");
+        Console.Write("Ange numret vid onskade alternativet: ");
+    }
+
+    private int Select()
+    {  
+        try
+        {
+            return int.Parse(Console.ReadLine());
+        }
+        catch (Exception)
+        {
+            Console.Write("\nFelaktig inmatning.\nAnge gärna ett heltal: ");
+            Select();
+        }
+    }
+
+    private void SwitchSelection(int selectedOption)
+    {
+            switch (selectedOption)
+            {
+                case 1: 
+                    AddSoda();
+                    break;
+                case 2:
+                    PrintCrate();
+                    break;
+                case 3:
+                    PrintTotal();
+                    break;
+                case 4:
+                    PrintAverage();
+                    break;
+                case 5:
+                    FindSoda();
+                    break;
+                case 6:
+                    SortSoda();
+                    break;
+                case 7:
+                    TakeSoda();
+                    break;
+                case 0:
+                    Console.WriteLine("----------------------------------\n" +
+                                      "Programmet avslutas");
+                    break;
+                default:                    
+                    break;
+            }
+        }
+
+    public void AddSoda()               // Metod för att lägga till en läsk
         {
             if (AntalFlaskor < 25)          // Om läskbacken inte är full, fråga efter namn, pris och typ
             {
@@ -488,8 +495,7 @@ namespace SodaCrateSlutprojekt
     {
         static void Main(string[] args)
         {
-            Sodacrate sodacrate = new Sodacrate();      // Skapar ett objekt av klassen Sodacrate
-            sodacrate.Run();                            // En metod av klassen Sodacrate som körs när programmet startar och styr hela programmet
+            Sodacrate sodacrate = new Sodacrate();
 
             Console.WriteLine("Tryck på valfri tangent för att bekräfta");
             Console.ReadKey();
