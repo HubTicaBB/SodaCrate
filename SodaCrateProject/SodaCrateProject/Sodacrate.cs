@@ -18,10 +18,14 @@ namespace SodaCrateProject
 
         private void Run()
         {
+            bool on = true;
             PrintMenu();
             int option = Select();
-            SwitchSelection(option);
-            Run();
+            SwitchSelection(option, ref on);            
+            while (on)
+            {
+                Run();
+            }            
         }
 
         private void PrintMenu()
@@ -56,7 +60,7 @@ namespace SodaCrateProject
             return 0;
         }
 
-        private void SwitchSelection(int selectedOption)
+        private void SwitchSelection(int selectedOption, ref bool on)
         {
             switch (selectedOption)
             {
@@ -82,14 +86,18 @@ namespace SodaCrateProject
                     TakeSoda();
                     break;
                 case 0:
-                    Console.WriteLine("----------------------------------\nProgrammet avslutas");
-                    break;
+                    Console.WriteLine("----------------------------------\n" +
+                                      "Programmet avslutas");
+                    on = false;
+                    return;
                 default:
                     break;
             }
+            Console.WriteLine("\n\n\nPress any key to continue...");
+            Console.ReadKey(true);
         }
         
-        public void AddSoda()
+        private void AddSoda()
         {
             if (CrateNotFull())
             {
@@ -111,7 +119,7 @@ namespace SodaCrateProject
             else
             {
                 Console.WriteLine("Läskbacken är full. För att tillägga en flaska, måste du först ta en annan ut.");
-            }
+            }            
         }
 
         private bool CrateNotFull()
@@ -119,7 +127,7 @@ namespace SodaCrateProject
             return (numberOfBottles < 25) ? true : false;
         }
 
-        public string AskName()
+        private string AskName()
         {
             Console.Write("----------------------------------------\n" +
                           "Vilken läsk vill du lägga till?\n\n" +
@@ -127,15 +135,10 @@ namespace SodaCrateProject
             return StringInput();
         }
 
-        public string StringInput()
+        private string StringInput()
         {
             string input = Console.ReadLine().ToLower().Trim();
             return input.First().ToString().ToUpper() + input.Substring(1);
-        }        
-
-        public double AskPrice()
-        {
-            return DoubleInput();
         }
 
         private bool UnknownSoda(string sodaName, ref double price, ref SodaType type)
@@ -146,14 +149,20 @@ namespace SodaCrateProject
                 {
                     price = mySodacrate[i].Price;
                     type = mySodacrate[i].Type;
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
 
-        public double DoubleInput()
+        private double AskPrice()
         {
+            Console.Write("Pris: ");
+            return DoubleInput();
+        }
+
+        private double DoubleInput()
+        {            
             try
             {
                 return double.Parse(Console.ReadLine());
@@ -166,68 +175,66 @@ namespace SodaCrateProject
             return 0.0;
         }
 
-        public SodaType AskType()
+        private SodaType AskType()
         {
+            Console.Write("Typ: ");
+            string input = StringInput();
+            input.Replace("o", "ö").Replace("la", "lä");
             try
             {
-                return (SodaType)Enum.Parse(typeof(SodaType), Console.ReadLine(), false);
+                return (SodaType)Enum.Parse(typeof(SodaType), input, false);
             }
             catch (Exception)
             {
-                Console.Write("Felaktig inmatnign, välj gärna mellan läsk, vatten eller lättöl: ");
+                Console.Write("Felaktig inmatning, välj gärna mellan läsk, vatten eller lättöl: ");
                 AskType();
             }
             return SodaType.none;
         }
 
-        public void PrintCrate()    // Metod för att skriva ut läskbackens innehål
+        private void PrintCrate()
         {
-            Console.WriteLine("-------------------------------------");
-            Console.WriteLine("  TYP   |      NAMN     |    PRIS");
-            Console.WriteLine("-------------------------------------");
-            foreach (Soda flaska in mySodacrate)    // Loopa genom vektorn mySodacrate
+            Console.WriteLine("-------------------------------------\n" +
+                              "   TYP   |      NAMN     |    PRIS   \n" +
+                              "-------------------------------------");
+            for (int i = 0; i < numberOfBottles; i++)
             {
-                if (flaska != null)             // Om något är lagrat i positionen, om den är inte tom
-                {
-                    Console.WriteLine(flaska);  // skriv ut objektets egenskaper (typ, namn och pris)
-                }
+                Console.WriteLine(mySodacrate[i]);
             }
-            if (numberOfBottles < 25)              // Om det finns några tomma positionen i vektorn dvs. backen
+
+            if (CrateNotFull())
             {
-                Console.WriteLine("-------------------------------------");
-                Console.WriteLine("Det finns {0} tomma platser kvar i läskbacken", 25 - numberOfBottles);  // Skriv ut hur många platser i backen är tomma
+                Console.WriteLine("-------------------------------------\n" +
+                                  $"Det finns {25 - numberOfBottles} tomma platser kvar i läskbacken.");
             }
         }
 
-        public double Total()   // Metod för att beräkna det totala värdet av backen, return value se koristi u PrintTotal() i PrintAverage()
-        {                       // Separat, därför att metodens returvärde används i både PrintTotal()- och PrintAverage()-metoder
+        private void PrintTotal()
+        {
+            Console.WriteLine($"----------------------------------------\n" +
+                              $"Totala värdet av backen är {Total():c}");
+        }
+
+        private double Total() 
+        {                       
             double total = 0.0;
-            foreach (Soda flaska in mySodacrate)        // Loopa genom vektorn mySodacrate
+            for (int i = 0; i < numberOfBottles; i++)
             {
-                if (flaska != null)                 // Om positionen i vektorn inte är tom
-                {
-                    total += flaska.Price;     // öka total med objektets pris, genom att anropa Price-metod av klassen Soda
-                }
+                total += mySodacrate[i].Price;
             }
-            return total;                           // metodens returvärde
+            return total; 
         }
 
-        public void PrintTotal()        // Metod för att skriva ut det totala värdet
-        {
-            Console.WriteLine("----------------------------------------");
-            Console.WriteLine("Totala värdet av backen är {0:f2} SEK", Total());    // Total()-metodanrop
-        }                                                                           // Skriva ut metodens returvärde
-
-        public void PrintAverage()      // Metod för att skriva ut medelvärdet
+        private void PrintAverage()
         {
             Console.WriteLine("----------------------------------------------------------");
-            if (numberOfBottles > 0)                               // Om backen inte är tomm
+            if (numberOfBottles > 0)
             {
-                Console.WriteLine("Medelvärdet av alla drycker i läskbacken är {0:f2} SEK", Total() / numberOfBottles);    // Skriv ut mädelvärdet (Total()-returvärde delad med antal flaskor
+                Console.WriteLine($"Medelvärdet av alla drycker i läskbacken är {Total() / numberOfBottles:c}");
             }
             else
             {
-                Console.WriteLine("Läskbacken är tom");         // Upplysa användaren att backen är tomm
+                Console.WriteLine("Läskbacken är tom");
             }
         }
 

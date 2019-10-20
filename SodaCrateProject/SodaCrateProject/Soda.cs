@@ -21,7 +21,7 @@ namespace SodaCrateProject
 
         public override string ToString()   // Metod som formaterar hur objektets utskrift ser ut
         {
-            return string.Format("{0} \t| \"{1}\" \t| {2,7:f2} SEK", Type.ToString(), Name.First().ToString().ToUpper() + Name.Substring(1), Price);
+            return $" {Type,-8}| {Name,-14}| {Price,9:c}";
         }
     }
 
