@@ -81,8 +81,7 @@ namespace SodaCrateSlutprojekt
                     TakeSoda();
                     break;
                 case 0:
-                    Console.WriteLine("----------------------------------\n" +
-                                      "Programmet avslutas");
+                    Console.WriteLine("----------------------------------\nProgrammet avslutas");
                     break;
                 default:                    
                     break;
