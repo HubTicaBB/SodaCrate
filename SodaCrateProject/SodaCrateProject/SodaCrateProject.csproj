@@ -45,6 +45,9 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Soda.cs" />
+    <Compile Include="Sodacrate.cs" />
+    <Compile Include="SodaType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

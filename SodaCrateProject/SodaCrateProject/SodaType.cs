@@ -5,14 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace SodaCrateProject
-{  
-    class Program
+{
+    enum SodaType
     {
-        static void Main(string[] args)
-        {
-            Sodacrate start = new Sodacrate();
-        }
+        none, 
+        Läsk, 
+        Vatten, 
+        Lättöl
     }
 }
-
-
